@@ -21,13 +21,15 @@ pub async fn send_eth_valset_update(
 ) -> Result<(), GravityError> {
     let old_nonce = old_valset.nonce;
     let new_nonce = new_valset.nonce;
-    assert!(new_nonce > old_nonce);
     let eth_address = our_eth_key.to_public_key().unwrap();
+
     info!(
         "Ordering signatures and submitting validator set {} -> {} update to Ethereum",
         old_nonce, new_nonce
     );
+
     let before_nonce = get_valset_nonce(gravity_contract_address, eth_address, web3).await?;
+    
     if before_nonce != old_nonce {
         info!(
             "Someone else updated the valset to {}, exiting early",
