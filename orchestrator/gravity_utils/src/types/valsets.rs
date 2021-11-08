@@ -148,8 +148,10 @@ impl Valset {
         for member in self.members.iter() {
             if let Some(eth_address) = member.eth_address {
                 if let Some(sig) = signatures_hashmap.get(&eth_address) {
-                    assert_eq!(sig.get_eth_address(), eth_address);
+                    
+                    // [handle]
                     assert!(sig.get_signature().is_valid());
+
                     let recover_key = sig.get_signature().recover(signed_message).unwrap();
                     if recover_key == sig.get_eth_address() {
                         out.push(GravitySignature {
