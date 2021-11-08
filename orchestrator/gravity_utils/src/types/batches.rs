@@ -49,13 +49,13 @@ impl TransactionBatch {
         let mut amounts = Vec::new();
         let mut destinations = Vec::new();
         let mut fees = Vec::new();
+        
         for item in self.transactions.iter() {
             amounts.push(Token::Uint(item.erc20_token.amount.clone()));
             fees.push(Token::Uint(item.erc20_fee.amount.clone()));
             destinations.push(item.ethereum_recipient)
         }
-        assert_eq!(amounts.len(), destinations.len());
-        assert_eq!(fees.len(), destinations.len());
+        
         (
             Token::Dynamic(amounts),
             destinations.into(),
