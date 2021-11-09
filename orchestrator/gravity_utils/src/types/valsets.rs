@@ -149,7 +149,7 @@ impl Valset {
             if let Some(eth_address) = member.eth_address {
                 if let Some(sig) = signatures_hashmap.get(&eth_address) {
                     
-                    // [handle]
+                    assert_eq!(sig.get_eth_address(), eth_address);
                     assert!(sig.get_signature().is_valid());
 
                     let recover_key = sig.get_signature().recover(signed_message).unwrap();
