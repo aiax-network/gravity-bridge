@@ -23,6 +23,7 @@ pub async fn relayer_main_loop(
     gas_multiplier: f32,
 ) {
     let mut grpc_client = grpc_client;
+
     loop {
         let (async_resp, _) = tokio::join!(
             async {
