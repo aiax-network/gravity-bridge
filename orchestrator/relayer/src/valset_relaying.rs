@@ -56,49 +56,61 @@ pub async fn relay_valsets(
     let mut latest_cosmos_valset = None;
     // this is used to display the state of the last validator set to fail signature checks
     let mut last_error = None;
+
     while latest_nonce > 0 {
-        let cosmos_valset = get_valset(grpc_client, latest_nonce).await;
-        if let Ok(Some(cosmos_valset)) = cosmos_valset {
-            assert_eq!(cosmos_valset.nonce, latest_nonce);
-            let confirms = get_all_valset_confirms(grpc_client, latest_nonce).await;
-            if let Ok(confirms) = confirms {
-                debug!(
-                    "Considering cosmos_valset {:?} confirms {:?}",
-                    cosmos_valset, confirms
-                );
+        match get_valset(grpc_client, latest_nonce).await {
+            Ok(Some(cosmos_valset)) => {
+                assert_eq!(cosmos_valset.nonce, latest_nonce);
 
-                for confirm in confirms.iter() {
-                    assert_eq!(cosmos_valset.nonce, confirm.nonce);
+                match get_all_valset_confirms(grpc_client, latest_nonce).await {
+                    Ok(confirms) => {
+                        debug!(
+                            "Considering cosmos_valset {:?} confirms {:?}",
+                            cosmos_valset, confirms
+                        );
+
+                        for confirm in confirms.iter() {
+                            assert_eq!(cosmos_valset.nonce, confirm.nonce);
+                        }
+
+                        let hash = encode_valset_confirm_hashed(gravity_id.clone(), cosmos_valset.clone());
+
+                        // there are two possible encoding problems that could cause the very rare sig failure bug,
+                        // one of them is that the hash is incorrect, that's not probable considering that
+                        // both Geth and Clarity agree on it. but this lets us check
+                        info!("New valset hash {}", bytes_to_hex_str(&hash),);
+
+                        // order valset sigs prepares signatures for submission, notice we compare
+                        // them to the 'current' set in the bridge, this confirms for us that the validator set
+                        // we have here can be submitted to the bridge in it's current state
+                        match current_eth_valset.order_sigs(&hash, &confirms) {
+                            Ok(_) => {
+                                info!("Consideration: looks good");
+                                latest_confirmed = Some(confirms);
+                                latest_cosmos_valset = Some(cosmos_valset);
+                                // once we have the latest validator set we can submit exit
+                                break;
+                            },
+                            Err(err) => {
+                                info!("Consideration: looks bad. {}", err);
+                                last_error = Some(err);
+                            }
+                        }
+                    },
+                    Err(err) => {
+                        error!("Error getting Cosmos valset confirmations for nonce {}. {:?}", latest_nonce, err);
+                    }
                 }
-                let hash = encode_valset_confirm_hashed(gravity_id.clone(), cosmos_valset.clone());
-
-                // there are two possible encoding problems that could cause the very rare sig failure bug,
-                // one of them is that the hash is incorrect, that's not probable considering that
-                // both Geth and Clarity agree on it. but this lets us check
-                info!("New valset hash {}", bytes_to_hex_str(&hash),);
-
-                // order valset sigs prepares signatures for submission, notice we compare
-                // them to the 'current' set in the bridge, this confirms for us that the validator set
-                // we have here can be submitted to the bridge in it's current state
-                let res = current_eth_valset.order_sigs(&hash, &confirms);
-                if res.is_ok() {
-                    info!("Consideration: looks good");
-                    latest_confirmed = Some(confirms);
-                    latest_cosmos_valset = Some(cosmos_valset);
-                    // once we have the latest validator set we can submit exit
-                    break;
-                } else if let Err(e) = res {
-                    info!("Consideration: looks bad {}", e);
-                    last_error = Some(e);
-                }
+            },
+            // Bootstrap condition
+            Ok(None) => (),
+            Err(err) => {
+                error!("Error getting Cosmos valset for nonce {}. {:?}", latest_nonce, err);
             }
-            // TODO(levi) this is ignoring/swallowing errors
         }
-        // TODO(levi) this is ignoring/swallowing errors
 
         latest_nonce -= 1
     }
-    // TODO(levi) this is ignoring/swallowing errors
 
     debug!("Relaying latest_confirmed {:?}", latest_confirmed);
     debug!("Relaying latest_cosmos_valset {:?}", latest_cosmos_valset);
@@ -107,6 +119,7 @@ pub async fn relay_valsets(
         error!("We don't have a latest confirmed valset?");
         return;
     }
+
     // the latest cosmos validator set that it is possible to submit given the constraints
     // of the validator set currently in the bridge
     let latest_cosmos_valset = latest_cosmos_valset.unwrap();
@@ -128,7 +141,7 @@ pub async fn relay_valsets(
     );
 
     if should_relay {
-        let cost = ethereum_gravity::valset_update::estimate_valset_cost(
+        let cost = match ethereum_gravity::valset_update::estimate_valset_cost(
             &latest_cosmos_valset,
             &current_eth_valset,
             &latest_cosmos_confirmed,
@@ -137,15 +150,16 @@ pub async fn relay_valsets(
             gravity_id.clone(),
             ethereum_key,
         )
-        .await;
-        if cost.is_err() {
-            error!(
-                "Valset cost estimate for Nonce {} failed with {:?}",
-                latest_cosmos_valset.nonce, cost
-            );
-            return;
-        }
-        let cost = cost.unwrap();
+        .await {
+            Ok(cost) => cost,
+            Err(err) => {
+                error!(
+                    "Valset cost estimate for Nonce {} failed with {:?}",
+                    latest_cosmos_valset.nonce, err
+                );
+                return;
+            }
+        };
 
         info!(
            "We have detected latest valset {} but latest on Ethereum is {} This valset is estimated to cost {} Gas / {:.4} ETH to submit",
@@ -155,7 +169,7 @@ pub async fn relay_valsets(
                 / downcast_to_u128(one_eth()).unwrap() as f32
         );
 
-        let relay_response = send_eth_valset_update(
+        match send_eth_valset_update(
             latest_cosmos_valset.clone(),
             current_eth_valset.clone(),
             &latest_cosmos_confirmed,
@@ -165,11 +179,16 @@ pub async fn relay_valsets(
             gravity_id,
             ethereum_key,
         )
-        .await;
-
-        info!(
-            "relay_response {:?} (latest_cosmos_valset.nonce {} current_eth_valset.nonce {})",
-            relay_response, latest_cosmos_valset.nonce, current_eth_valset.nonce,
-        );
+        .await {
+            Ok(relay_response) =>
+                info!(
+                    "relay_response {:?} (latest_cosmos_valset.nonce {} current_eth_valset.nonce {})",
+                    relay_response, latest_cosmos_valset.nonce, current_eth_valset.nonce
+                ),
+            Err(err) =>
+                error!("relay_response {:?} (latest_cosmos_valset.nonce {} current_eth_valset.nonce {})",
+                    err, latest_cosmos_valset.nonce, current_eth_valset.nonce
+                ),
+        }
     }
 }
