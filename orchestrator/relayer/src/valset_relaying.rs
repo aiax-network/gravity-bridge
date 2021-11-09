@@ -35,17 +35,18 @@ pub async fn relay_valsets(
 
     // we should determine if we need to relay one
     // to Ethereum for that we will find the latest confirmed valset and compare it to the ethereum chain
-    let latest_valset = get_latest_valset(grpc_client).await;
-    if latest_valset.is_err() {
-        error!("Failed to get latest valset! {:?}", latest_valset);
-        return;
-    }
-    let latest_valset = latest_valset.unwrap();
-    if latest_valset.is_none() {
-        return;
-    }
-
-    let latest_valset = latest_valset.unwrap();
+    let latest_valset = match get_latest_valset(grpc_client).await {
+        Ok(opt) => {
+            match opt {
+                Some(valset) => valset,
+                None => return,
+            }
+        },
+        Err(err) => {
+            error!("Failed to get latest valset! {:?}", err);
+            return;
+        },
+    };
 
     // we only use the latest valsets endpoint to get a starting point, from there we will iterate
     // backwards until we find the newest validator set that we can submit to the bridge. So if we
