@@ -31,14 +31,14 @@ pub async fn relay_logic_calls(
     let our_ethereum_address = ethereum_key.to_public_key().unwrap();
 
     let latest_calls = match get_latest_logic_calls(grpc_client).await {
-        Ok(calls) =>  {
+        Ok(calls) => {
             trace!("Latest Logic calls {:?}", calls);
             calls
-        },
+        }
         Err(err) => {
             error!("Error while retrieving latest logic calls: {:?}", err);
             return;
-        },
+        }
     };
 
     let mut oldest_signed_call: Option<LogicCall> = None;
@@ -92,13 +92,11 @@ pub async fn relay_logic_calls(
         our_ethereum_address,
         web3,
     )
-    .await {
+    .await
+    {
         Ok(nonce) => nonce,
         Err(err) => {
-            error!(
-                "Failed to get latest Ethereum LogicCall with {:?}",
-                err
-            );
+            error!("Failed to get latest Ethereum LogicCall with {:?}", err);
             return;
         }
     };
@@ -114,7 +112,8 @@ pub async fn relay_logic_calls(
             gravity_id.clone(),
             ethereum_key,
         )
-        .await {
+        .await
+        {
             Ok(cost) => cost,
             Err(err) => {
                 error!("LogicCall cost estimate failed with {:?}", err);

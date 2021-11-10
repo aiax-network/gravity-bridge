@@ -36,16 +36,14 @@ pub async fn relay_valsets(
     // we should determine if we need to relay one
     // to Ethereum for that we will find the latest confirmed valset and compare it to the ethereum chain
     let latest_valset = match get_latest_valset(grpc_client).await {
-        Ok(opt) => {
-            match opt {
-                Some(valset) => valset,
-                None => return,
-            }
+        Ok(opt) => match opt {
+            Some(valset) => valset,
+            None => return,
         },
         Err(err) => {
             error!("Failed to get latest valset! {:?}", err);
             return;
-        },
+        }
     };
 
     // we only use the latest valsets endpoint to get a starting point, from there we will iterate
@@ -74,7 +72,8 @@ pub async fn relay_valsets(
                             assert_eq!(cosmos_valset.nonce, confirm.nonce);
                         }
 
-                        let hash = encode_valset_confirm_hashed(gravity_id.clone(), cosmos_valset.clone());
+                        let hash =
+                            encode_valset_confirm_hashed(gravity_id.clone(), cosmos_valset.clone());
 
                         // there are two possible encoding problems that could cause the very rare sig failure bug,
                         // one of them is that the hash is incorrect, that's not probable considering that
@@ -91,22 +90,28 @@ pub async fn relay_valsets(
                                 latest_cosmos_valset = Some(cosmos_valset);
                                 // once we have the latest validator set we can submit exit
                                 break;
-                            },
+                            }
                             Err(err) => {
                                 info!("Consideration: looks bad. {}", err);
                                 last_error = Some(err);
                             }
                         }
-                    },
+                    }
                     Err(err) => {
-                        error!("Error getting Cosmos valset confirmations for nonce {}. {:?}", latest_nonce, err);
+                        error!(
+                            "Error getting Cosmos valset confirmations for nonce {}. {:?}",
+                            latest_nonce, err
+                        );
                     }
                 }
-            },
+            }
             // Bootstrap condition
             Ok(None) => (),
             Err(err) => {
-                error!("Error getting Cosmos valset for nonce {}. {:?}", latest_nonce, err);
+                error!(
+                    "Error getting Cosmos valset for nonce {}. {:?}",
+                    latest_nonce, err
+                );
             }
         }
 
@@ -151,7 +156,8 @@ pub async fn relay_valsets(
             gravity_id.clone(),
             ethereum_key,
         )
-        .await {
+        .await
+        {
             Ok(cost) => cost,
             Err(err) => {
                 error!(
@@ -180,16 +186,16 @@ pub async fn relay_valsets(
             gravity_id,
             ethereum_key,
         )
-        .await {
-            Ok(relay_response) =>
-                info!(
-                    "relay_response {:?} (latest_cosmos_valset.nonce {} current_eth_valset.nonce {})",
-                    relay_response, latest_cosmos_valset.nonce, current_eth_valset.nonce
-                ),
-            Err(err) =>
-                error!("relay_response {:?} (latest_cosmos_valset.nonce {} current_eth_valset.nonce {})",
-                    err, latest_cosmos_valset.nonce, current_eth_valset.nonce
-                ),
+        .await
+        {
+            Ok(relay_response) => info!(
+                "relay_response {:?} (latest_cosmos_valset.nonce {} current_eth_valset.nonce {})",
+                relay_response, latest_cosmos_valset.nonce, current_eth_valset.nonce
+            ),
+            Err(err) => error!(
+                "relay_response {:?} (latest_cosmos_valset.nonce {} current_eth_valset.nonce {})",
+                err, latest_cosmos_valset.nonce, current_eth_valset.nonce
+            ),
         }
     }
 }

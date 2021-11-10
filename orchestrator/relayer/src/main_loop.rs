@@ -30,35 +30,31 @@ pub async fn relayer_main_loop(
                 let our_ethereum_address = match ethereum_key.to_public_key() {
                     Ok(addr) => addr,
                     Err(err) => {
-                        error!("Unable to derive Ethereum address from the provided key. {:?}", err);
-                        return
-                    }
-                };
-
-                let current_eth_valset = match find_latest_valset(
-                    &mut grpc_client,
-                    gravity_contract_address,
-                    &web3,
-                )
-                .await {
-                    Ok(valset) => valset,
-                    Err(err) => {
-                        error!("Could not get current valset! {:?}", err);
+                        error!(
+                            "Unable to derive Ethereum address from the provided key. {:?}",
+                            err
+                        );
                         return;
                     }
                 };
 
-                let gravity_id = match get_gravity_id(
-                    gravity_contract_address,
-                    our_ethereum_address,
-                    &web3,
-                ).await {
-                    Ok(id) => id,
-                    Err(err) => {
-                        error!("Failed to get GravityID, check your Eth node. {:?}", err);
-                        return;
-                    }
-                };
+                let current_eth_valset =
+                    match find_latest_valset(&mut grpc_client, gravity_contract_address, &web3).await {
+                        Ok(valset) => valset,
+                        Err(err) => {
+                            error!("Could not get current valset! {:?}", err);
+                            return;
+                        }
+                    };
+
+                let gravity_id =
+                    match get_gravity_id(gravity_contract_address, our_ethereum_address, &web3).await {
+                        Ok(id) => id,
+                        Err(err) => {
+                            error!("Failed to get GravityID, check your Eth node. {:?}", err);
+                            return;
+                        }
+                    };
 
                 relay_valsets(
                     current_eth_valset.clone(),
