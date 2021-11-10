@@ -1,7 +1,6 @@
 use clarity::address::Address as EthAddress;
 use clarity::PrivateKey as EthPrivateKey;
 use clarity::Uint256;
-
 use cosmos_gravity::query::get_latest_transaction_batches;
 use cosmos_gravity::query::get_transaction_batch_signatures;
 use ethereum_gravity::utils::{downcast_to_u128, get_tx_batch_nonce};
@@ -77,37 +76,45 @@ async fn get_batches_and_signatures(
     } else {
         return HashMap::new();
     };
+
     trace!("Latest batches {:?}", latest_batches);
 
     let mut possible_batches = HashMap::new();
-    for batch in latest_batches {
-        let sigs =
-            get_transaction_batch_signatures(grpc_client, batch.nonce, batch.token_contract).await;
-        trace!("Got sigs {:?}", sigs);
-        if let Ok(sigs) = sigs {
-            // this checks that the signatures for the batch are actually possible to submit to the chain
-            let hash = encode_tx_batch_confirm_hashed(gravity_id.clone(), batch.clone());
-            if current_valset.order_sigs(&hash, &sigs).is_ok() {
-                // we've found a valid batch, add it to the list for it's token type
-                possible_batches
-                    .entry(batch.token_contract)
-                    .or_insert_with(Vec::new);
 
-                let list = possible_batches.get_mut(&batch.token_contract).unwrap();
-                list.push(SubmittableBatch { batch, sigs });
-            } else {
-                warn!(
-                    "Batch {}/{} can not be submitted yet, waiting for more signatures",
-                    batch.token_contract, batch.nonce
+    for batch in latest_batches {
+        match get_transaction_batch_signatures(grpc_client, batch.nonce, batch.token_contract).await
+        {
+            Ok(sigs) => {
+                trace!("Got sigs {:?}", sigs);
+                // this checks that the signatures for the batch are actually possible to submit to the chain
+                let hash = encode_tx_batch_confirm_hashed(gravity_id.clone(), batch.clone());
+
+                if current_valset.order_sigs(&hash, &sigs).is_ok() {
+                    // we've found a valid batch, add it to the list for it's token type
+                    possible_batches
+                        .entry(batch.token_contract)
+                        .or_insert_with(Vec::new);
+
+                    // These two lines referencing "list" seem to be doing nothing
+                    let list = possible_batches.get_mut(&batch.token_contract).unwrap();
+
+                    list.push(SubmittableBatch { batch, sigs });
+                } else {
+                    warn!(
+                        "Batch {}/{} can not be submitted yet, waiting for more signatures",
+                        batch.token_contract, batch.nonce
+                    );
+                }
+            }
+            Err(err) => {
+                error!(
+                    "could not get signatures for {}:{} with {:?}",
+                    batch.token_contract, batch.nonce, err
                 );
             }
-        } else {
-            error!(
-                "could not get signatures for {}:{} with {:?}",
-                batch.token_contract, batch.nonce, sigs
-            );
         }
     }
+
     // reverse the list so that it is oldest first, we want to submit
     // older batches so that we don't invalidate newer batches
     for (_key, value) in possible_batches.iter_mut() {
@@ -139,6 +146,8 @@ async fn submit_batches(
     gas_multiplier: f32,
     possible_batches: HashMap<EthAddress, Vec<SubmittableBatch>>,
 ) {
+    // Leaving this naked unwrap() as is because main_loop must have successfully derived
+    // the public key already in order to get this far.
     let our_ethereum_address = ethereum_key.to_public_key().unwrap();
     let ethereum_block_height = if let Ok(bn) = web3.eth_block_number().await {
         bn
@@ -153,27 +162,26 @@ async fn submit_batches(
     // do that though.
     for (token_type, possible_batches) in possible_batches {
         let erc20_contract = token_type;
-        let latest_ethereum_batch = get_tx_batch_nonce(
+        let latest_ethereum_batch = match get_tx_batch_nonce(
             gravity_contract_address,
             erc20_contract,
             our_ethereum_address,
             web3,
         )
-        .await;
-        if latest_ethereum_batch.is_err() {
-            error!(
-                "Failed to get latest Ethereum batch with {:?}",
-                latest_ethereum_batch
-            );
-            return;
-        }
-        let latest_ethereum_batch = latest_ethereum_batch.unwrap();
+        .await
+        {
+            Ok(batch) => batch,
+            Err(err) => {
+                error!("Failed to get latest Ethereum batch with {:?}", err);
+                return;
+            }
+        };
 
         for batch in possible_batches {
             let oldest_signed_batch = batch.batch;
             let oldest_signatures = batch.sigs;
-
             let timeout_height: Uint256 = oldest_signed_batch.batch_timeout.into();
+
             if timeout_height < ethereum_block_height {
                 warn!(
                     "Batch {}/{} has timed out and can not be submitted",
@@ -183,8 +191,9 @@ async fn submit_batches(
             }
 
             let latest_cosmos_batch_nonce = oldest_signed_batch.clone().nonce;
+
             if latest_cosmos_batch_nonce > latest_ethereum_batch {
-                let cost = ethereum_gravity::submit_batch::estimate_tx_batch_cost(
+                let cost = match ethereum_gravity::submit_batch::estimate_tx_batch_cost(
                     current_valset.clone(),
                     oldest_signed_batch.clone(),
                     &oldest_signatures,
@@ -193,22 +202,25 @@ async fn submit_batches(
                     gravity_id.clone(),
                     ethereum_key,
                 )
-                .await;
-                if cost.is_err() {
-                    error!("Batch cost estimate failed with {:?}", cost);
-                    continue;
-                }
-                let cost = cost.unwrap();
-                info!(
-                "We have detected latest batch {} but latest on Ethereum is {} This batch is estimated to cost {} Gas / {:.4} ETH to submit",
-                latest_cosmos_batch_nonce,
-                latest_ethereum_batch,
-                cost.gas_price.clone(),
-                downcast_to_u128(cost.get_total()).unwrap() as f32
-                    / downcast_to_u128(one_eth()).unwrap() as f32
-            );
-                let tx_options = vec![SendTxOption::GasPriceMultiplier(gas_multiplier)];
+                .await
+                {
+                    Ok(cost) => cost,
+                    Err(err) => {
+                        error!("Batch cost estimate failed with {:?}", err);
+                        continue;
+                    }
+                };
 
+                info!(
+                    "We have detected latest batch {} but latest on Ethereum is {} This batch is estimated to cost {} Gas / {:.4} ETH to submit",
+                    latest_cosmos_batch_nonce,
+                    latest_ethereum_batch,
+                    cost.gas_price.clone(),
+                    downcast_to_u128(cost.get_total()).unwrap() as f32
+                        / downcast_to_u128(one_eth()).unwrap() as f32
+                );
+
+                let tx_options = vec![SendTxOption::GasPriceMultiplier(gas_multiplier)];
                 let res = send_eth_transaction_batch(
                     current_valset.clone(),
                     oldest_signed_batch,
@@ -221,8 +233,9 @@ async fn submit_batches(
                     tx_options,
                 )
                 .await;
+
                 if res.is_err() {
-                    info!("Batch submission failed with {:?}", res);
+                    warn!("Batch submission failed with {:?}", res);
                 }
             }
         }

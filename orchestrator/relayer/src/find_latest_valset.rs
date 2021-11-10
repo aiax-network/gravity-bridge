@@ -1,7 +1,7 @@
 use clarity::{Address, Uint256};
 use ethereum_gravity::utils::downcast_uint256;
 use gravity_proto::gravity::query_client::QueryClient as GravityQueryClient;
-use gravity_utils::types::ValsetUpdatedEvent;
+use gravity_utils::types::{ValsetUpdatedEvent, ValsetsNoncePair};
 use gravity_utils::{error::GravityError, types::Valset};
 use tonic::transport::Channel;
 use web30::client::Web3;
@@ -17,6 +17,7 @@ pub async fn find_latest_valset(
     web3: &Web3,
 ) -> Result<Valset, GravityError> {
     const BLOCKS_TO_SEARCH: u128 = 5_000u128;
+
     let latest_block = web3.eth_block_number().await?;
     let mut current_block: Uint256 = latest_block.clone();
 
@@ -25,11 +26,13 @@ pub async fn find_latest_valset(
             "About to submit a Valset or Batch looking back into the history to find the last Valset Update, on block {}",
             current_block
         );
+
         let end_search = if current_block.clone() < BLOCKS_TO_SEARCH.into() {
             0u8.into()
         } else {
             current_block.clone() - BLOCKS_TO_SEARCH.into()
         };
+
         let mut all_valset_events = web3
             .check_for_events(
                 end_search.clone(),
@@ -38,6 +41,7 @@ pub async fn find_latest_valset(
                 vec!["ValsetUpdatedEvent(uint256,uint256,address[],uint256[])"],
             )
             .await?;
+
         // by default the lowest found valset goes first, we want the highest.
         all_valset_events.reverse();
 
@@ -46,12 +50,16 @@ pub async fn find_latest_valset(
         // we take only the first event if we find any at all.
         if !all_valset_events.is_empty() {
             let event = &all_valset_events[0];
+
             match ValsetUpdatedEvent::from_log(event) {
                 Ok(event) => {
                     let latest_eth_valset = Valset {
+                        // Leaving this unwrap because the likelyhood of us every having a nonce that
+                        // overflows a u64 is... low.
                         nonce: downcast_uint256(event.valset_nonce.clone()).unwrap(),
                         members: event.members,
                     };
+
                     let cosmos_chain_valset =
                         cosmos_gravity::query::get_valset(grpc_client, latest_eth_valset.nonce)
                             .await?;
@@ -76,24 +84,39 @@ pub async fn find_latest_valset(
 /// The other (and far worse) way a disagreement here could occur is if validators are colluding to steal
 /// funds from the Gravity contract and have submitted a highjacking update. If slashing for off Cosmos chain
 /// Ethereum signatures is implemented you would put that handler here.
-fn check_if_valsets_differ(cosmos_valset: Option<Valset>, ethereum_valset: &Valset) {
+fn check_if_valsets_differ(
+    cosmos_valset: Option<Valset>,
+    ethereum_valset: &Valset,
+) -> Result<(), GravityError> {
     if cosmos_valset.is_none() && ethereum_valset.nonce == 0 {
         // bootstrapping case
-        return;
+        return Ok(());
     } else if cosmos_valset.is_none() {
         error!("Cosmos does not have a valset for nonce {} but that is the one on the Ethereum chain! Possible bridge highjacking!", ethereum_valset.nonce);
-        return;
+        return Ok(());
     }
+
     let cosmos_valset = cosmos_valset.unwrap();
+
     if cosmos_valset != *ethereum_valset {
-        // if this is not true then we have a logic error on the Cosmos chain
+        // if this is true then we have a logic error on the Cosmos chain
         // or with our Ethereum search
-        assert_eq!(cosmos_valset.nonce, ethereum_valset.nonce);
+        if cosmos_valset.nonce != ethereum_valset.nonce {
+            error!(
+                "Cosmos valset nonce ({}) and Ethereum valset nonce ({}) are not the same!",
+                cosmos_valset.nonce, ethereum_valset.nonce
+            );
+            return Err(GravityError::DifferingValsetNoncesError(
+                ValsetsNoncePair::from((cosmos_valset.nonce, ethereum_valset.nonce)),
+            ));
+        }
 
         let mut c_valset = cosmos_valset.members;
         let mut e_valset = ethereum_valset.members.clone();
+
         c_valset.sort();
         e_valset.sort();
+
         if c_valset == e_valset {
             info!(
                 "Sorting disagreement between Cosmos and Ethereum on Valset nonce {}",
@@ -103,4 +126,6 @@ fn check_if_valsets_differ(cosmos_valset: Option<Valset>, ethereum_valset: &Vals
             info!("Validator sets for nonce {} Cosmos and Ethereum differ. Possible bridge highjacking!", ethereum_valset.nonce)
         }
     }
+
+    Ok(())
 }
