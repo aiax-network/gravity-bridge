@@ -197,8 +197,8 @@ fn encode_logic_call_payload(
     let payload = clarity::abi::encode_call(
         "submitLogicCall(address[],uint256[],uint256,uint8[],bytes32[],bytes32[],(uint256[],address[],uint256[],address[],address,bytes,uint256,bytes32,uint256))",
         tokens,
-    )
-    .unwrap();
+    )?;
+
     trace!("Tokens {:?}", tokens);
 
     Ok(payload)

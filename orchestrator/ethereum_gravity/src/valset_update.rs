@@ -29,7 +29,7 @@ pub async fn send_eth_valset_update(
     );
 
     let before_nonce = get_valset_nonce(gravity_contract_address, eth_address, web3).await?;
-    
+
     if before_nonce != old_nonce {
         info!(
             "Someone else updated the valset to {}, exiting early",
@@ -161,7 +161,7 @@ pub fn encode_valset_payload(
     let payload = clarity::abi::encode_call(
         "updateValset(address[],uint256[],uint256,address[],uint256[],uint256,uint8[],bytes32[],bytes32[])",
         tokens,
-    ).unwrap();
+    )?;
 
     Ok(payload)
 }

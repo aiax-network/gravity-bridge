@@ -167,7 +167,9 @@ fn encode_batch_payload(
         batch.batch_timeout.into(),
     ];
     let payload = clarity::abi::encode_call("submitBatch(address[],uint256[],uint256,uint8[],bytes32[],bytes32[],uint256[],address[],uint256[],uint256,address,uint256)",
-    tokens).unwrap();
+        tokens
+    )?;
+
     trace!("Tokens {:?}", tokens);
 
     Ok(payload)
