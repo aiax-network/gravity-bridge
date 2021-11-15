@@ -58,7 +58,11 @@ impl fmt::Display for GravityError {
                 write!(f, "{}", val)
             }
             GravityError::ParseBigIntError(val) => write!(f, "Failed to parse big integer {}", val),
-            GravityError::DifferingValsetNoncesError(nonces) => write!(f, "Cosmos valset nonce ({}) and Ethereum valset nonce ({}) do not match!", nonces.cosmos_nonce, nonces.ethereum_nonce)
+            GravityError::DifferingValsetNoncesError(nonces) => write!(
+                f,
+                "Cosmos valset nonce ({}) and Ethereum valset nonce ({}) do not match!",
+                nonces.cosmos_nonce, nonces.ethereum_nonce
+            ),
         }
     }
 }

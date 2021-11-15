@@ -148,7 +148,6 @@ impl Valset {
         for member in self.members.iter() {
             if let Some(eth_address) = member.eth_address {
                 if let Some(sig) = signatures_hashmap.get(&eth_address) {
-                    
                     assert_eq!(sig.get_eth_address(), eth_address);
                     assert!(sig.get_signature().is_valid());
 
@@ -468,6 +467,9 @@ pub struct ValsetsNoncePair {
 
 impl From<(u64, u64)> for ValsetsNoncePair {
     fn from(input: (u64, u64)) -> Self {
-        ValsetsNoncePair { cosmos_nonce: input.0, ethereum_nonce: input.1 }
+        ValsetsNoncePair {
+            cosmos_nonce: input.0,
+            ethereum_nonce: input.1,
+        }
     }
 }
