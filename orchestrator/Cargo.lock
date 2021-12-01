@@ -175,7 +175,7 @@ dependencies = [
  "serde_urlencoded",
  "sha-1",
  "slab",
- "time 0.2.26",
+ "time",
 ]
 
 [[package]]
@@ -216,7 +216,7 @@ dependencies = [
  "serde",
  "sha-1",
  "smallvec",
- "time 0.2.26",
+ "time",
  "tokio 1.5.0",
  "zstd",
 ]
@@ -448,7 +448,7 @@ dependencies = [
  "serde_json",
  "serde_urlencoded",
  "socket2 0.3.19",
- "time 0.2.26",
+ "time",
  "tinyvec",
  "url",
 ]
@@ -508,15 +508,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1e37cfd5e7657ada45f742d6e99ca5788580b5c529dc78faf11ece6dc702656f"
 dependencies = [
  "memchr",
-]
-
-[[package]]
-name = "anomaly"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "550632e31568ae1a5f47998c3aa48563030fc49b9ec91913ca337cf64fbc5ccb"
-dependencies = [
- "backtrace",
 ]
 
 [[package]]
@@ -842,20 +833,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
-name = "chrono"
-version = "0.4.19"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "670ad68c9088c2a963aaa298cb369688cf3f9465ce5e2d4ca10e6e0098a1ce73"
-dependencies = [
- "libc",
- "num-integer",
- "num-traits",
- "serde",
- "time 0.1.43",
- "winapi 0.3.9",
-]
-
-[[package]]
 name = "clap"
 version = "3.0.0-beta.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -958,7 +935,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "03a5d7b21829bc7b4bf4754a978a241ae54ea55a40f92bb20216e54096f4b951"
 dependencies = [
  "percent-encoding",
- "time 0.2.26",
+ "time",
  "version_check",
 ]
 
@@ -970,14 +947,12 @@ checksum = "a2df960f5d869b2dd8532793fde43eb5427cceb126c929747a26823ab0eeb536"
 
 [[package]]
 name = "cosmos-sdk-proto"
-version = "0.6.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7115eae4b8518967b8e737a3ef76025f2d007de7906d88c18f00b8bbfc70f51e"
+version = "0.8.0"
 dependencies = [
- "prost",
- "prost-types",
- "tendermint-proto",
- "tonic",
+ "bytes 1.0.1",
+ "prost 0.9.0",
+ "prost-types 0.9.0",
+ "tonic 0.6.1",
 ]
 
 [[package]]
@@ -988,20 +963,19 @@ dependencies = [
  "bytes 1.0.1",
  "clarity",
  "cosmos-sdk-proto",
- "deep_space 2.4.7",
+ "deep_space 2.6.0",
  "env_logger",
  "ethereum_gravity",
- "gravity_proto",
  "gravity_utils",
  "log",
  "num256",
- "prost",
- "prost-types",
+ "prost 0.7.0",
+ "prost-types 0.7.0",
  "rand 0.8.3",
  "serde",
  "sha3",
  "tokio 1.5.0",
- "tonic",
+ "tonic 0.4.2",
  "web30",
 ]
 
@@ -1133,8 +1107,7 @@ dependencies = [
 
 [[package]]
 name = "deep_space"
-version = "2.4.7"
-source = "git+https://github.com/iqlusioninc/deep_space/?branch=master#c6b31f758a4d4542f1272815be130e0904e2854d"
+version = "2.6.0"
 dependencies = [
  "base64",
  "bech32 0.8.0",
@@ -1146,8 +1119,8 @@ dependencies = [
  "num-traits",
  "num256",
  "pbkdf2 0.9.0",
- "prost",
- "prost-types",
+ "prost 0.9.0",
+ "prost-types 0.9.0",
  "rand 0.8.3",
  "ripemd160",
  "rust_decimal",
@@ -1156,9 +1129,8 @@ dependencies = [
  "serde_derive",
  "serde_json",
  "sha2",
- "tendermint-proto",
  "tokio 1.5.0",
- "tonic",
+ "tonic 0.6.1",
  "unicode-normalization",
 ]
 
@@ -1293,7 +1265,7 @@ name = "ethereum_gravity"
 version = "0.1.0"
 dependencies = [
  "clarity",
- "deep_space 2.4.7",
+ "deep_space 2.6.0",
  "gravity_utils",
  "log",
  "num256",
@@ -1548,11 +1520,11 @@ dependencies = [
  "bytes 1.0.1",
  "clap",
  "clarity",
+ "cosmos-sdk-proto",
  "cosmos_gravity",
- "deep_space 2.4.7",
+ "deep_space 2.6.0",
  "env_logger",
  "ethereum_gravity",
- "gravity_proto",
  "gravity_utils",
  "k256",
  "log",
@@ -1561,7 +1533,7 @@ dependencies = [
  "orchestrator",
  "pkcs8",
  "proc-macro2",
- "prost",
+ "prost 0.7.0",
  "rand_core 0.6.2",
  "regex",
  "relayer",
@@ -1571,7 +1543,7 @@ dependencies = [
  "thiserror",
  "tokio 1.5.0",
  "toml",
- "tonic",
+ "tonic 0.4.2",
  "web30",
 ]
 
@@ -1579,10 +1551,10 @@ dependencies = [
 name = "gravity_bridge"
 version = "0.1.0"
 dependencies = [
+ "cosmos-sdk-proto",
  "cosmos_gravity",
  "ethereum_gravity",
  "gorc",
- "gravity_proto",
  "gravity_utils",
  "orchestrator",
  "proto_build",
@@ -1592,25 +1564,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "gravity_proto"
-version = "0.1.0"
-dependencies = [
- "bytes 1.0.1",
- "cosmos-sdk-proto",
- "prost",
- "prost-types",
- "tonic",
-]
-
-[[package]]
 name = "gravity_utils"
 version = "0.1.0"
 dependencies = [
  "actix",
  "clarity",
  "cosmos-sdk-proto",
- "deep_space 2.4.7",
- "gravity_proto",
+ "deep_space 2.6.0",
  "log",
  "num-bigint 0.4.0",
  "num256",
@@ -1619,7 +1579,7 @@ dependencies = [
  "serde_derive",
  "sha3",
  "tokio 1.5.0",
- "tonic",
+ "tonic 0.4.2",
  "url",
  "web30",
 ]
@@ -1756,9 +1716,9 @@ dependencies = [
 
 [[package]]
 name = "http-body"
-version = "0.4.1"
+version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5dfb77c123b4e2f72a2069aeae0b4b4949cc7e966df277813fc16347e7549737"
+checksum = "1ff4f84919677303da5f147645dbea6b1881f368d03ac84e1dc09031ebd7b2c6"
 dependencies = [
  "bytes 1.0.1",
  "http",
@@ -1785,9 +1745,9 @@ checksum = "9a3a5bfb195931eeb336b2a7b4d761daec841b97f947d34394601737a7bba5e4"
 
 [[package]]
 name = "hyper"
-version = "0.14.11"
+version = "0.14.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0b61cf2d1aebcf6e6352c97b81dc2244ca29194be1b276f5d8ad5c6330fffb11"
+checksum = "436ec0091e4f20e655156a30a0df3770fe2900aa301e548e08446ec794b6953c"
 dependencies = [
  "bytes 1.0.1",
  "futures-channel",
@@ -1805,6 +1765,18 @@ dependencies = [
  "tower-service",
  "tracing",
  "want",
+]
+
+[[package]]
+name = "hyper-timeout"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbb958482e8c7be4bc3cf272a766a2b0bf1a6755e7a6ae777f017a31d11b13b1"
+dependencies = [
+ "hyper",
+ "pin-project-lite 0.2.6",
+ "tokio 1.5.0",
+ "tokio-io-timeout",
 ]
 
 [[package]]
@@ -1875,6 +1847,15 @@ name = "itertools"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "284f18f85651fe11e8a991b2adb42cb078325c996ed026d994719efcfca1d54b"
+dependencies = [
+ "either",
+]
+
+[[package]]
+name = "itertools"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "69ddb889f9d0d08a67338271fa9b62996bc788c7796a5c18cf057420aaed5eaf"
 dependencies = [
  "either",
 ]
@@ -2369,13 +2350,13 @@ dependencies = [
  "actix-rt 2.2.0",
  "axum",
  "clarity",
+ "cosmos-sdk-proto",
  "cosmos_gravity",
- "deep_space 2.4.7",
+ "deep_space 2.6.0",
  "docopt",
  "env_logger",
  "ethereum_gravity",
  "futures",
- "gravity_proto",
  "gravity_utils",
  "hyper",
  "lazy_static",
@@ -2390,7 +2371,7 @@ dependencies = [
  "serde_derive",
  "serde_json",
  "tokio 1.5.0",
- "tonic",
+ "tonic 0.4.2",
  "web30",
 ]
 
@@ -2661,7 +2642,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9e6984d2f1a23009bd270b8bb56d0926810a3d483f59c987d77969e9d8e840b2"
 dependencies = [
  "bytes 1.0.1",
- "prost-derive",
+ "prost-derive 0.7.0",
+]
+
+[[package]]
+name = "prost"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "444879275cb4fd84958b1a1d5420d15e6fcf7c235fe47f053c9c2a80aceb6001"
+dependencies = [
+ "bytes 1.0.1",
+ "prost-derive 0.9.0",
 ]
 
 [[package]]
@@ -2672,12 +2663,12 @@ checksum = "32d3ebd75ac2679c2af3a92246639f9fcc8a442ee420719cc4fe195b98dd5fa3"
 dependencies = [
  "bytes 1.0.1",
  "heck",
- "itertools",
+ "itertools 0.9.0",
  "log",
  "multimap",
  "petgraph",
- "prost",
- "prost-types",
+ "prost 0.7.0",
+ "prost-types 0.7.0",
  "tempfile",
  "which",
 ]
@@ -2689,7 +2680,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "169a15f3008ecb5160cba7d37bcd690a7601b6d30cfb87a117d45e59d52af5d4"
 dependencies = [
  "anyhow",
- "itertools",
+ "itertools 0.9.0",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "prost-derive"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f9cc1a3263e07e0bf68e96268f37665207b49560d98739662cdfaae215c720fe"
+dependencies = [
+ "anyhow",
+ "itertools 0.10.1",
  "proc-macro2",
  "quote",
  "syn",
@@ -2702,18 +2706,28 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b518d7cdd93dab1d1122cf07fa9a60771836c668dde9d9e2a139f957f0d9f1bb"
 dependencies = [
  "bytes 1.0.1",
- "prost",
+ "prost 0.7.0",
+]
+
+[[package]]
+name = "prost-types"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "534b7a0e836e3c482d2693070f982e39e7611da9695d4d1f5a4b186b51faef0a"
+dependencies = [
+ "bytes 1.0.1",
+ "prost 0.9.0",
 ]
 
 [[package]]
 name = "proto_build"
 version = "0.1.0"
 dependencies = [
- "prost",
+ "prost 0.7.0",
  "prost-build",
  "regex",
  "tempdir",
- "tonic",
+ "tonic 0.4.2",
  "tonic-build",
  "walkdir",
 ]
@@ -2899,12 +2913,12 @@ dependencies = [
  "actix-rt 2.2.0",
  "clarity",
  "contact",
+ "cosmos-sdk-proto",
  "cosmos_gravity",
- "deep_space 2.4.7",
+ "deep_space 2.6.0",
  "docopt",
  "env_logger",
  "ethereum_gravity",
- "gravity_proto",
  "gravity_utils",
  "lazy_static",
  "log",
@@ -2923,12 +2937,12 @@ dependencies = [
  "actix",
  "actix-rt 2.2.0",
  "clarity",
+ "cosmos-sdk-proto",
  "cosmos_gravity",
- "deep_space 2.4.7",
+ "deep_space 2.6.0",
  "docopt",
  "env_logger",
  "ethereum_gravity",
- "gravity_proto",
  "gravity_utils",
  "lazy_static",
  "log",
@@ -2937,7 +2951,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "tokio 1.5.0",
- "tonic",
+ "tonic 0.4.2",
  "web30",
 ]
 
@@ -3359,15 +3373,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1e81da0851ada1f3e9d4312c704aa4f8806f0f9d69faaf8df2f3464b4a9437c2"
 
 [[package]]
-name = "subtle-encoding"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7dcb1ed7b8330c5eed5441052651dd7a12c75e2ed88f2ec024ae1fa3a5e59945"
-dependencies = [
- "zeroize",
-]
-
-[[package]]
 name = "syn"
 version = "1.0.80"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3415,25 +3420,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tendermint-proto"
-version = "0.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bfd0371c6b0c7fc4f6b053b8a1bc868a2a47c49a1408c4cd6f595d9f3bd3c238"
-dependencies = [
- "anomaly",
- "bytes 1.0.1",
- "chrono",
- "num-derive",
- "num-traits",
- "prost",
- "prost-types",
- "serde",
- "serde_bytes",
- "subtle-encoding",
- "thiserror",
-]
-
-[[package]]
 name = "termcolor"
 version = "1.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3450,13 +3436,13 @@ dependencies = [
  "actix-rt 2.2.0",
  "actix-web",
  "clarity",
+ "cosmos-sdk-proto",
  "cosmos_gravity",
- "deep_space 2.4.7",
+ "deep_space 2.6.0",
  "docopt",
  "env_logger",
  "ethereum_gravity",
  "futures",
- "gravity_proto",
  "gravity_utils",
  "lazy_static",
  "log",
@@ -3466,7 +3452,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "tokio 1.5.0",
- "tonic",
+ "tonic 0.4.2",
  "url",
  "web30",
 ]
@@ -3516,16 +3502,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d050e60b33d41c19108b32cea32164033a9013fe3b46cbd4457559bfbf77afaa"
 dependencies = [
  "num_cpus",
-]
-
-[[package]]
-name = "time"
-version = "0.1.43"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ca8a50ef2360fbd1eeb0ecd46795a87a19024eb4b53c5dc916ca1fd95fe62438"
-dependencies = [
- "libc",
- "winapi 0.3.9",
 ]
 
 [[package]]
@@ -3619,6 +3595,16 @@ dependencies = [
  "signal-hook-registry",
  "tokio-macros",
  "winapi 0.3.9",
+]
+
+[[package]]
+name = "tokio-io-timeout"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "90c49f106be240de154571dd31fbe48acb10ba6c6dd6f6517ad603abffa42de9"
+dependencies = [
+ "pin-project-lite 0.2.6",
+ "tokio 1.5.0",
 ]
 
 [[package]]
@@ -3720,12 +3706,43 @@ dependencies = [
  "hyper",
  "percent-encoding",
  "pin-project 1.0.6",
- "prost",
- "prost-derive",
+ "prost 0.7.0",
+ "prost-derive 0.7.0",
  "tokio 1.5.0",
  "tokio-stream",
  "tokio-util 0.6.6",
  "tower",
+ "tower-service",
+ "tracing",
+ "tracing-futures",
+]
+
+[[package]]
+name = "tonic"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "24203b79cf2d68909da91178db3026e77054effba0c5d93deb870d3ca7b35afa"
+dependencies = [
+ "async-stream",
+ "async-trait",
+ "base64",
+ "bytes 1.0.1",
+ "futures-core",
+ "futures-util",
+ "h2 0.3.3",
+ "http",
+ "http-body",
+ "hyper",
+ "hyper-timeout",
+ "percent-encoding",
+ "pin-project 1.0.6",
+ "prost 0.9.0",
+ "prost-derive 0.9.0",
+ "tokio 1.5.0",
+ "tokio-stream",
+ "tokio-util 0.6.6",
+ "tower",
+ "tower-layer",
  "tower-service",
  "tracing",
  "tracing-futures",
@@ -3745,9 +3762,9 @@ dependencies = [
 
 [[package]]
 name = "tower"
-version = "0.4.6"
+version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f715efe02c0862926eb463e49368d38ddb119383475686178e32e26d15d06a66"
+checksum = "f60422bc7fefa2f3ec70359b8ff1caff59d785877eb70595904605bcc412470f"
 dependencies = [
  "futures-core",
  "futures-util",

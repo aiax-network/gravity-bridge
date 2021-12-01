@@ -13,12 +13,12 @@ regex = "1.5.4"
 
 cosmos_gravity = { path = "../cosmos_gravity" }
 ethereum_gravity = { path = "../ethereum_gravity" }
-gravity_proto = { path = "../gravity_proto" }
+cosmos-sdk-proto = { path = "../../../cosmos-rust/cosmos-sdk-proto" }
 gravity_utils = { path = "../gravity_utils" }
 orchestrator = { path = "../orchestrator" }
 relayer = { path = "../relayer" }
+deep_space = { path = "../../../deep_space" }
 
-deep_space ={git="https://github.com/iqlusioninc/deep_space/", branch="master"}
 clarity = "0.4.12"
 actix-rt = "2.2"
 rpassword = "5"

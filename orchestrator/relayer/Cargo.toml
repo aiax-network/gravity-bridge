@@ -16,9 +16,9 @@ path = "src/main.rs"
 ethereum_gravity = { path = "../ethereum_gravity" }
 cosmos_gravity = { path = "../cosmos_gravity" }
 gravity_utils = { path = "../gravity_utils" }
-gravity_proto = { path = "../gravity_proto" }
+deep_space = { path = "../../../deep_space" }
+cosmos-sdk-proto = { path = "../../../cosmos-rust/cosmos-sdk-proto" }
 
-deep_space ={git="https://github.com/iqlusioninc/deep_space/", branch="master"}
 serde_derive = "1.0"
 clarity = "0.4.11"
 docopt = "1"
