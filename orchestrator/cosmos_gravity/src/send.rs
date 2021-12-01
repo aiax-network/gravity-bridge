@@ -8,9 +8,9 @@ use deep_space::private_key::PrivateKey as CosmosPrivateKey;
 use deep_space::Contact;
 use deep_space::Fee;
 use deep_space::Msg;
-use gravity_proto::cosmos_sdk_proto::cosmos::base::abci::v1beta1::TxResponse;
-use gravity_proto::cosmos_sdk_proto::cosmos::tx::v1beta1::BroadcastMode;
-use gravity_proto::gravity as proto;
+use cosmos_sdk_proto::cosmos::base::abci::v1beta1::TxResponse;
+use cosmos_sdk_proto::cosmos::tx::v1beta1::BroadcastMode;
+use cosmos_sdk_proto::gravity as proto;
 use prost::Message;
 use std::cmp;
 use std::collections::HashSet;
@@ -133,9 +133,10 @@ async fn __send_messages(
         payer: None,
     };
 
-    let mut args = contact.get_message_args(cosmos_address, fee).await?;
+    let mut args = contact.get_message_args(cosmos_address, fee).await?;    
+    let tx_parts = cosmos_key.build_tx(&messages, args.clone(), MEMO)?;        
 
-    let tx_parts = cosmos_key.build_tx(&messages, args.clone(), MEMO)?;
+
     let gas = contact.simulate_tx(tx_parts).await?;
 
     // multiply the estimated gas by the configured gas adjustment

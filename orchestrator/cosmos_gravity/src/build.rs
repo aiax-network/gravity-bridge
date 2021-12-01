@@ -6,8 +6,8 @@ use deep_space::utils::bytes_to_hex_str;
 use deep_space::Contact;
 use deep_space::Msg;
 use ethereum_gravity::utils::downcast_uint256;
-use gravity_proto::gravity as proto;
-use gravity_proto::ToAny;
+use cosmos_sdk_proto::gravity as proto;
+use cosmos_sdk_proto::ToAny;
 use gravity_utils::message_signatures::{
     encode_logic_call_confirm, encode_tx_batch_confirm, encode_valset_confirm,
 };
