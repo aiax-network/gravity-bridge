@@ -1,7 +1,7 @@
 use crate::{application::APP, prelude::*};
 use abscissa_core::{Clap, Command, Runnable};
 use ethereum_gravity::deploy_erc20::deploy_erc20;
-use gravity_proto::gravity::{DenomToErc20ParamsRequest, DenomToErc20Request};
+use cosmos_sdk_proto::gravity::{DenomToErc20ParamsRequest, DenomToErc20Request};
 use gravity_utils::connection_prep::{check_for_eth, create_rpc_connections};
 use std::convert::TryFrom;
 use std::process::exit;

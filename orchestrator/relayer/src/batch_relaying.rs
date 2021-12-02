@@ -6,7 +6,7 @@ use cosmos_gravity::query::get_latest_transaction_batches;
 use cosmos_gravity::query::get_transaction_batch_signatures;
 use ethereum_gravity::utils::{downcast_to_u128, get_tx_batch_nonce};
 use ethereum_gravity::{one_eth, submit_batch::send_eth_transaction_batch};
-use gravity_proto::gravity::query_client::QueryClient as GravityQueryClient;
+use cosmos_sdk_proto::gravity::query_client::QueryClient as GravityQueryClient;
 use gravity_utils::message_signatures::encode_tx_batch_confirm_hashed;
 use gravity_utils::types::Valset;
 use gravity_utils::types::{BatchConfirmResponse, TransactionBatch};

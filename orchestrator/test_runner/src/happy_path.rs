@@ -16,7 +16,7 @@ use deep_space::private_key::PrivateKey as CosmosPrivateKey;
 use deep_space::Contact;
 use ethereum_gravity::utils::get_valset_nonce;
 use ethereum_gravity::{send_to_cosmos::send_to_cosmos, utils::get_tx_batch_nonce};
-use gravity_proto::gravity::query_client::QueryClient as GravityQueryClient;
+use cosmos_sdk_proto::gravity::query_client::QueryClient as GravityQueryClient;
 use gravity_utils::types::SendToCosmosEvent;
 use rand::Rng;
 use std::time::Duration;

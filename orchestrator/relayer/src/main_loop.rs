@@ -5,7 +5,7 @@ use crate::{
 use clarity::address::Address as EthAddress;
 use clarity::PrivateKey as EthPrivateKey;
 use ethereum_gravity::utils::get_gravity_id;
-use gravity_proto::gravity::query_client::QueryClient as GravityQueryClient;
+use cosmos_sdk_proto::gravity::query_client::QueryClient as GravityQueryClient;
 use std::time::Duration;
 use tonic::transport::Channel;
 use web30::client::Web3;

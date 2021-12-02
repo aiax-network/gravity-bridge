@@ -6,7 +6,7 @@ use ethereum_gravity::{
     logic_call::send_eth_logic_call,
     utils::{downcast_to_u128, get_logic_call_nonce},
 };
-use gravity_proto::gravity::query_client::QueryClient as GravityQueryClient;
+use cosmos_sdk_proto::gravity::query_client::QueryClient as GravityQueryClient;
 use gravity_utils::types::{LogicCallConfirmResponse, Valset};
 use gravity_utils::{message_signatures::encode_logic_call_confirm_hashed, types::LogicCall};
 use std::time::Duration;

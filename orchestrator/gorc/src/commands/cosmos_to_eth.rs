@@ -4,7 +4,7 @@ use clarity::Address as EthAddress;
 use clarity::Uint256;
 use cosmos_gravity::send::{send_request_batch_tx, send_to_eth};
 use deep_space::coin::Coin;
-use gravity_proto::gravity::DenomToErc20Request;
+use cosmos_sdk_proto::gravity::DenomToErc20Request;
 use gravity_utils::connection_prep::{check_for_fee_denom, create_rpc_connections};
 use std::{process::exit, time::Duration};
 

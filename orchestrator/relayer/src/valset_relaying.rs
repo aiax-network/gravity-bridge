@@ -9,7 +9,7 @@ use clarity::PrivateKey as EthPrivateKey;
 use cosmos_gravity::query::get_latest_valset;
 use cosmos_gravity::query::{get_all_valset_confirms, get_valset};
 use ethereum_gravity::{one_eth, utils::downcast_to_u128, valset_update::send_eth_valset_update};
-use gravity_proto::gravity::query_client::QueryClient as GravityQueryClient;
+use cosmos_sdk_proto::gravity::query_client::QueryClient as GravityQueryClient;
 use gravity_utils::{message_signatures::encode_valset_confirm_hashed, types::Valset};
 use tonic::transport::Channel;
 use web30::client::Web3;

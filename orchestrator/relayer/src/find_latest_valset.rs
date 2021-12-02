@@ -1,6 +1,6 @@
 use clarity::{Address, Uint256};
 use ethereum_gravity::utils::downcast_uint256;
-use gravity_proto::gravity::query_client::QueryClient as GravityQueryClient;
+use cosmos_sdk_proto::gravity::query_client::QueryClient as GravityQueryClient;
 use gravity_utils::types::ValsetUpdatedEvent;
 use gravity_utils::{error::GravityError, types::Valset};
 use tonic::transport::Channel;

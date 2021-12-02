@@ -950,9 +950,9 @@ name = "cosmos-sdk-proto"
 version = "0.8.0"
 dependencies = [
  "bytes 1.0.1",
- "prost 0.9.0",
+ "prost",
  "prost-types",
- "tonic 0.6.1",
+ "tonic",
 ]
 
 [[package]]
@@ -969,13 +969,13 @@ dependencies = [
  "gravity_utils",
  "log",
  "num256",
- "prost 0.9.0",
+ "prost",
  "prost-types",
  "rand 0.8.3",
  "serde",
  "sha3",
  "tokio 1.5.0",
- "tonic 0.6.1",
+ "tonic",
  "web30",
 ]
 
@@ -1119,7 +1119,7 @@ dependencies = [
  "num-traits",
  "num256",
  "pbkdf2 0.9.0",
- "prost 0.9.0",
+ "prost",
  "prost-types",
  "rand 0.8.3",
  "ripemd160",
@@ -1130,7 +1130,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "tokio 1.5.0",
- "tonic 0.6.1",
+ "tonic",
  "unicode-normalization",
 ]
 
@@ -1521,7 +1521,7 @@ dependencies = [
  "orchestrator",
  "pkcs8",
  "proc-macro2",
- "prost 0.7.0",
+ "prost",
  "rand_core 0.6.2",
  "regex",
  "relayer",
@@ -1531,7 +1531,7 @@ dependencies = [
  "thiserror",
  "tokio 1.5.0",
  "toml",
- "tonic 0.4.2",
+ "tonic",
  "web30",
 ]
 
@@ -1566,7 +1566,7 @@ dependencies = [
  "serde_derive",
  "sha3",
  "tokio 1.5.0",
- "tonic 0.6.1",
+ "tonic",
  "url",
  "web30",
 ]
@@ -1827,15 +1827,6 @@ dependencies = [
  "widestring",
  "winapi 0.3.9",
  "winreg",
-]
-
-[[package]]
-name = "itertools"
-version = "0.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "284f18f85651fe11e8a991b2adb42cb078325c996ed026d994719efcfca1d54b"
-dependencies = [
- "either",
 ]
 
 [[package]]
@@ -2352,7 +2343,7 @@ dependencies = [
  "serde_derive",
  "serde_json",
  "tokio 1.5.0",
- "tonic 0.4.2",
+ "tonic",
  "web30",
 ]
 
@@ -2608,35 +2599,12 @@ dependencies = [
 
 [[package]]
 name = "prost"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e6984d2f1a23009bd270b8bb56d0926810a3d483f59c987d77969e9d8e840b2"
-dependencies = [
- "bytes 1.0.1",
- "prost-derive 0.7.0",
-]
-
-[[package]]
-name = "prost"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "444879275cb4fd84958b1a1d5420d15e6fcf7c235fe47f053c9c2a80aceb6001"
 dependencies = [
  "bytes 1.0.1",
- "prost-derive 0.9.0",
-]
-
-[[package]]
-name = "prost-derive"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "169a15f3008ecb5160cba7d37bcd690a7601b6d30cfb87a117d45e59d52af5d4"
-dependencies = [
- "anyhow",
- "itertools 0.9.0",
- "proc-macro2",
- "quote",
- "syn",
+ "prost-derive",
 ]
 
 [[package]]
@@ -2646,7 +2614,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f9cc1a3263e07e0bf68e96268f37665207b49560d98739662cdfaae215c720fe"
 dependencies = [
  "anyhow",
- "itertools 0.10.1",
+ "itertools",
  "proc-macro2",
  "quote",
  "syn",
@@ -2659,7 +2627,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "534b7a0e836e3c482d2693070f982e39e7611da9695d4d1f5a4b186b51faef0a"
 dependencies = [
  "bytes 1.0.1",
- "prost 0.9.0",
+ "prost",
 ]
 
 [[package]]
@@ -2844,7 +2812,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "tokio 1.5.0",
- "tonic 0.4.2",
+ "tonic",
  "web30",
 ]
 
@@ -3303,7 +3271,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "tokio 1.5.0",
- "tonic 0.4.2",
+ "tonic",
  "url",
  "web30",
 ]
@@ -3541,35 +3509,6 @@ dependencies = [
 
 [[package]]
 name = "tonic"
-version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "556dc31b450f45d18279cfc3d2519280273f460d5387e6b7b24503e65d206f8b"
-dependencies = [
- "async-stream",
- "async-trait",
- "base64",
- "bytes 1.0.1",
- "futures-core",
- "futures-util",
- "h2 0.3.3",
- "http",
- "http-body",
- "hyper",
- "percent-encoding",
- "pin-project 1.0.6",
- "prost 0.7.0",
- "prost-derive 0.7.0",
- "tokio 1.5.0",
- "tokio-stream",
- "tokio-util 0.6.6",
- "tower",
- "tower-service",
- "tracing",
- "tracing-futures",
-]
-
-[[package]]
-name = "tonic"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "24203b79cf2d68909da91178db3026e77054effba0c5d93deb870d3ca7b35afa"
@@ -3587,8 +3526,8 @@ dependencies = [
  "hyper-timeout",
  "percent-encoding",
  "pin-project 1.0.6",
- "prost 0.9.0",
- "prost-derive 0.9.0",
+ "prost",
+ "prost-derive",
  "tokio 1.5.0",
  "tokio-stream",
  "tokio-util 0.6.6",

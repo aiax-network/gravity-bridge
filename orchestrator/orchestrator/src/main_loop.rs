@@ -22,7 +22,7 @@ use deep_space::error::CosmosGrpcError;
 use deep_space::private_key::PrivateKey as CosmosPrivateKey;
 use deep_space::{Contact, Msg};
 use ethereum_gravity::utils::get_gravity_id;
-use gravity_proto::gravity::query_client::QueryClient as GravityQueryClient;
+use cosmos_sdk_proto::gravity::query_client::QueryClient as GravityQueryClient;
 use relayer::main_loop::relayer_main_loop;
 use std::convert::TryInto;
 use std::{net, time::Duration};
@@ -190,7 +190,7 @@ pub async fn eth_oracle_main_loop(
                         metrics::ETHEREUM_EVENT_CHECK_FAILURES.inc();
                         error!("Failed to get events for block range, Check your Eth node and Cosmos gRPC {:?}", e);
                         if let gravity_utils::error::GravityError::CosmosGrpcError(err) = e {
-                            if let CosmosGrpcError::TransactionFailed { tx: _, time: _ } = err {
+                            if let CosmosGrpcError::TransactionFailed { tx: _, time: _ , sdk_error: _ } = err {
                                 delay_for(Duration::from_secs(10)).await;
                             }
                         }

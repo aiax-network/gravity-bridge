@@ -137,8 +137,8 @@ async fn __send_messages(
     let tx_parts = cosmos_key.build_tx(&messages, args.clone(), MEMO)?;        
 
 
-    let gas = contact.simulate_tx(tx_parts).await?;
-
+    let gas = contact.simulate_tx_parts(tx_parts).await?.gas_info.unwrap();
+    
     // multiply the estimated gas by the configured gas adjustment
     let gas_limit: f64 = (gas.gas_used as f64) * gas_adjustment;
     args.fee.gas_limit = cmp::max(gas_limit as u64, 500000 * messages.len() as u64);
@@ -185,7 +185,7 @@ pub async fn send_messages(
     let mut args = contact.get_message_args(cosmos_address, fee).await?;
 
     let tx_parts = cosmos_key.build_tx(&messages, args.clone(), MEMO)?;
-    let gas = contact.simulate_tx(tx_parts).await?;
+    let gas = contact.simulate_tx_parts(tx_parts).await?.gas_info.unwrap();
 
     // multiply the estimated gas by the configured gas adjustment
     let gas_limit: f64 = (gas.gas_used as f64) * gas_adjustment;

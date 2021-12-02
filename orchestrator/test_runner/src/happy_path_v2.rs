@@ -6,12 +6,13 @@ use crate::{get_fee, utils::ValidatorKeys};
 use clarity::Address as EthAddress;
 use clarity::Uint256;
 use cosmos_gravity::send::{send_request_batch_tx, send_to_eth};
+use cosmos_sdk_proto::gravity::{
+    query_client::QueryClient as GravityQueryClient, DenomToErc20Request,
+};
 use deep_space::coin::Coin;
 use deep_space::Contact;
 use ethereum_gravity::{deploy_erc20::deploy_erc20, utils::get_event_nonce};
-use gravity_proto::gravity::{
-    query_client::QueryClient as GravityQueryClient, DenomToErc20Request,
-};
+
 use tonic::transport::Channel;
 use web30::client::Web3;
 #[allow(unused_assignments)]
@@ -110,12 +111,12 @@ pub async fn happy_path_test_v2(
     let user = get_user_key();
     // send the user some footoken
     contact
-        .send_tokens(
+        .send_coins(
             send_to_user_coin.clone(),
             Some(get_fee()),
             user.cosmos_address,
-            keys[0].validator_key,
             Some(TOTAL_TIMEOUT),
+            keys[0].validator_key,
         )
         .await
         .unwrap();

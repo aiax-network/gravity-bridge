@@ -1,6 +1,6 @@
 use crate::{application::APP, prelude::*};
 use abscissa_core::{Application, Clap, Command, Runnable};
-use gravity_proto::gravity as proto;
+use cosmos_sdk_proto::gravity as proto;
 use std::time::Duration;
 
 /// Sign delegate keys command

@@ -17,7 +17,7 @@ use cosmos_gravity::utils::wait_for_cosmos_online;
 use deep_space::coin::Coin;
 use deep_space::Address as CosmosAddress;
 use deep_space::Contact;
-use gravity_proto::gravity::query_client::QueryClient as GravityQueryClient;
+use cosmos_sdk_proto::gravity::query_client::QueryClient as GravityQueryClient;
 use happy_path::happy_path_test;
 use happy_path_v2::happy_path_test_v2;
 use orch_keys_update::orch_keys_update;
