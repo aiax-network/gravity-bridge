@@ -243,6 +243,12 @@ pub struct SendToCosmosEvent {
     pub event_nonce: Uint256,
     /// The block height this event occurred at
     pub block_height: Uint256,
+    /// erc20 token name
+    pub name: String,
+    /// erc20 token symbol
+    pub symbol: String,
+    /// erc20 token decimals
+    pub decimals: u8,
 }
 
 impl SendToCosmosEvent {
@@ -261,7 +267,49 @@ impl SendToCosmosEvent {
             c_address_bytes.copy_from_slice(&destination_data[12..32]);
             let destination = CosmosAddress::from_bytes(c_address_bytes, prefix).unwrap();
             let amount = Uint256::from_bytes_be(&input.data[..32]);
-            let event_nonce = Uint256::from_bytes_be(&input.data[32..]);
+            let event_nonce = Uint256::from_bytes_be(&input.data[32..64]);
+
+            let index_start = 4 * 32;
+            let index_end = index_start + 32;
+            let decimals = Uint256::from_bytes_be(&input.data[index_start..index_end]);
+            if decimals > u8::MAX.into() {
+                return Err(GravityError::InvalidEventLogError(
+                    "SendToCosmosEvent: 'decimals' overflow, probably incorrect parsing"
+                        .to_string(),
+                ));
+            }
+            let decimals: u8 = decimals.to_string().parse().unwrap();
+
+            // name
+            let index_start = index_end;
+            let index_end = index_start + 32;
+            let len = Uint256::from_bytes_be(&input.data[index_start..index_end]);
+            if len > u64::MAX.into() {
+                return Err(GravityError::InvalidEventLogError(
+                    "SendToCosmosEvent: 'name' length overflow, probably incorrect parsing"
+                        .to_string(),
+                ));
+            }
+            let len: usize = len.to_string().parse().unwrap();
+            let index_start = index_end;
+            let index_end = index_start + len;
+            let name = String::from_utf8(input.data[index_start..index_end].to_vec()).unwrap();
+
+            // symbol
+            let index_start = index_end;
+            let index_end = index_start + 32;
+            let len = Uint256::from_bytes_be(&input.data[index_start..index_end]);
+            if len > u64::MAX.into() {
+                return Err(GravityError::InvalidEventLogError(
+                    "SendToCosmosEvent: 'symbol' length overflow, probably incorrect parsing"
+                        .to_string(),
+                ));
+            }
+            let len: usize = len.to_string().parse().unwrap();
+            let index_start = index_end;
+            let index_end = index_start + len;
+            let symbol = String::from_utf8(input.data[index_start..index_end].to_vec()).unwrap();
+
             let block_height = if let Some(bn) = input.block_number.clone() {
                 bn
             } else {
@@ -282,6 +330,9 @@ impl SendToCosmosEvent {
                     amount,
                     event_nonce,
                     block_height,
+                    name,
+                    symbol,
+                    decimals,
                 })
             }
         } else {

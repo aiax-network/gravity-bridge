@@ -66,16 +66,16 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 //
 // target_eth_tx_timeout:
 //
-// This is the 'target' value for when ethereum transactions time out, this is a target
-// because Ethereum is a probabilistic chain and you can't say for sure what the
-// block frequency is ahead of time.
+// This is the 'target' value for when ethereum transactions time out, this is a
+// target because Ethereum is a probabilistic chain and you can't say for sure
+// what the block frequency is ahead of time.
 //
 // average_block_time
 // average_ethereum_block_time
 //
 // These values are the average Cosmos block time and Ethereum block time
-// respectively and they are used to compute what the target batch timeout is. It
-// is important that governance updates these in case of any major, prolonged
+// respectively and they are used to compute what the target batch timeout is.
+// It is important that governance updates these in case of any major, prolonged
 // change in the time it takes to produce a block
 //
 // slash_fraction_signer_set_tx
@@ -1284,10 +1284,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthGenesis
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthGenesis
 			}
 			if (iNdEx + skippy) > l {
@@ -1596,10 +1593,7 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthGenesis
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthGenesis
 			}
 			if (iNdEx + skippy) > l {
@@ -1713,10 +1707,7 @@ func (m *ERC20ToDenom) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthGenesis
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthGenesis
 			}
 			if (iNdEx + skippy) > l {

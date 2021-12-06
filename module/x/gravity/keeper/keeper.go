@@ -23,6 +23,11 @@ import (
 	"github.com/peggyjv/gravity-bridge/module/x/gravity/types"
 )
 
+type EthereumEventsHook interface {
+  /// Returns `true` if no farther event prcessing required.
+  HandleEthereumEvent(cxt sdk.Context, eve types.EthereumEvent) (bool, error)
+}
+
 // Keeper maintains the link to storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
 	StakingKeeper  types.StakingKeeper
@@ -33,6 +38,7 @@ type Keeper struct {
 	bankKeeper     types.BankKeeper
 	SlashingKeeper types.SlashingKeeper
 	PowerReduction sdk.Int
+  EventHook      EthereumEventsHook 
 	hooks          types.GravityHooks
 }
 

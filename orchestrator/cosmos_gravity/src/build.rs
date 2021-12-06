@@ -132,6 +132,9 @@ pub fn ethereum_event_messages(
             amount: deposit.amount.to_string(),
             cosmos_receiver: deposit.destination.to_string(),
             ethereum_sender: deposit.sender.to_string(),
+            name: deposit.name.to_string(),
+            symbol:  deposit.symbol.to_string(),
+            decimals: deposit.decimals.into()
         };
         let msg = proto::MsgSubmitEthereumEvent {
             signer: cosmos_address.to_string(),

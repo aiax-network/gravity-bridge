@@ -453,7 +453,10 @@ async fn submit_duplicate_erc20_send(
         erc20: erc20_address,
         sender: ethereum_sender,
         destination: receiver,
-        amount,
+        amount,        
+        name: "Test token".to_string(),
+        symbol: "TTT".to_string(),
+        decimals: 18
     };
 
     // iterate through all validators and try to send an event with duplicate nonce
