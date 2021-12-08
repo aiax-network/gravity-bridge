@@ -23,13 +23,13 @@ func (k Keeper) DetectMaliciousSupply(ctx sdk.Context, denom string, amount sdk.
 
 // Handle is the entry point for EthereumEvent processing
 func (k Keeper) Handle(ctx sdk.Context, eve types.EthereumEvent) (err error) {
-	if k.EventHook != nil {
-		processed, err := k.EventHook.HandleEthereumEvent(ctx, eve)
+	if k.EventsHook != nil {
+		processed, err := k.EventsHook.HandleEthereumEvent(ctx, eve)
 		if err != nil {
 			return err
 		}
 		if processed {
-      // Call after hooks
+			// Call after hooks
 			switch event := eve.(type) {
 			case *types.SendToCosmosEvent:
 				k.AfterSendToCosmosEvent(ctx, *event)

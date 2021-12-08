@@ -296,7 +296,7 @@ impl SendToCosmosEvent {
             let name = String::from_utf8(input.data[index_start..index_end].to_vec()).unwrap();
 
             // symbol
-            let index_start = index_end;
+            let index_start = ((index_end + 31) / 32) * 32;
             let index_end = index_start + 32;
             let len = Uint256::from_bytes_be(&input.data[index_start..index_end]);
             if len > u64::MAX.into() {

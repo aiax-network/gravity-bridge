@@ -24,8 +24,8 @@ import (
 )
 
 type EthereumEventsHook interface {
-  /// Returns `true` if no farther event prcessing required.
-  HandleEthereumEvent(cxt sdk.Context, eve types.EthereumEvent) (bool, error)
+	/// Returns `true` if no farther event prcessing required.
+	HandleEthereumEvent(cxt sdk.Context, eve types.EthereumEvent) (bool, error)
 }
 
 // Keeper maintains the link to storage and exposes getter/setter methods for the various parts of the state machine
@@ -38,7 +38,7 @@ type Keeper struct {
 	bankKeeper     types.BankKeeper
 	SlashingKeeper types.SlashingKeeper
 	PowerReduction sdk.Int
-  EventHook      EthereumEventsHook 
+	EventsHook      EthereumEventsHook
 	hooks          types.GravityHooks
 }
 
@@ -74,6 +74,10 @@ func NewKeeper(
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", "x/"+types.ModuleName)
+}
+
+func (k *Keeper) SetEthereumEventsHook(hook EthereumEventsHook) {
+	k.EventsHook = hook
 }
 
 /////////////////////////////
