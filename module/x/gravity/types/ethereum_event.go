@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"fmt"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/math"
 	tmbytes "github.com/tendermint/tendermint/libs/bytes"
 )
 
@@ -126,6 +128,16 @@ func (stce *SendToCosmosEvent) Validate() error {
 	if _, err := sdk.AccAddressFromBech32(stce.CosmosReceiver); err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, stce.CosmosReceiver)
 	}
+  if stce.Decimals > math.MaxUint8 {
+    return sdkerrors.Wrap(ErrInvalid, "ethereum token decimals")
+  }
+  if len(strings.TrimSpace(stce.Name)) == 0 {
+    return sdkerrors.Wrap(ErrInvalid, "ethereum token name")
+  }
+  if len(strings.TrimSpace(stce.Symbol)) == 0 {
+    return sdkerrors.Wrap(ErrInvalid, "ethereum token symbol")
+  }
+  
 	return nil
 }
 
