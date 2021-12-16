@@ -81,7 +81,7 @@ func (k Keeper) Handle(ctx sdk.Context, eve types.EthereumEvent) (err error) {
 		}
 
 		// add to denom-erc20 mapping
-		k.setCosmosOriginatedDenomToERC20(ctx, event.CosmosDenom, event.TokenContract)
+		k.SetCosmosOriginatedDenomToERC20(ctx, event.CosmosDenom, event.TokenContract)
 		k.AfterERC20DeployedEvent(ctx, *event)
 		return nil
 
@@ -106,7 +106,7 @@ func (k Keeper) Handle(ctx sdk.Context, eve types.EthereumEvent) (err error) {
 }
 
 func (k Keeper) verifyERC20DeployedEvent(ctx sdk.Context, event *types.ERC20DeployedEvent) error {
-	if existingERC20, exists := k.getCosmosOriginatedERC20(ctx, event.CosmosDenom); exists {
+	if existingERC20, exists := k.GetCosmosOriginatedERC20(ctx, event.CosmosDenom); exists {
 		return sdkerrors.Wrapf(
 			types.ErrInvalidERC20Event,
 			"ERC20 token %s already exists for denom %s", existingERC20.Hex(), event.CosmosDenom,

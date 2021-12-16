@@ -10,7 +10,7 @@ import (
 	"github.com/peggyjv/gravity-bridge/module/x/gravity/types"
 )
 
-func (k Keeper) getCosmosOriginatedDenom(ctx sdk.Context, tokenContract string) (string, bool) {
+func (k Keeper) GetCosmosOriginatedDenom(ctx sdk.Context, tokenContract string) (string, bool) {
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.MakeERC20ToDenomKey(tokenContract))
 
@@ -20,7 +20,7 @@ func (k Keeper) getCosmosOriginatedDenom(ctx sdk.Context, tokenContract string) 
 	return "", false
 }
 
-func (k Keeper) getCosmosOriginatedERC20(ctx sdk.Context, denom string) (common.Address, bool) {
+func (k Keeper) GetCosmosOriginatedERC20(ctx sdk.Context, denom string) (common.Address, bool) {
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.MakeDenomToERC20Key(denom))
 
@@ -30,7 +30,7 @@ func (k Keeper) getCosmosOriginatedERC20(ctx sdk.Context, denom string) (common.
 	return common.BytesToAddress([]byte{}), false
 }
 
-func (k Keeper) setCosmosOriginatedDenomToERC20(ctx sdk.Context, denom string, tokenContract string) {
+func (k Keeper) SetCosmosOriginatedDenomToERC20(ctx sdk.Context, denom string, tokenContract string) {
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.MakeDenomToERC20Key(denom), common.HexToAddress(tokenContract).Bytes())
 	store.Set(types.MakeERC20ToDenomKey(tokenContract), []byte(denom))
@@ -46,7 +46,7 @@ func (k Keeper) DenomToERC20Lookup(ctx sdk.Context, denom string) (bool, common.
 	tc1, err := types.GravityDenomToERC20(denom)
 	if err != nil {
 		// Look up ERC20 contract in index and error if it's not in there.
-		tc2, exists := k.getCosmosOriginatedERC20(ctx, denom)
+		tc2, exists := k.GetCosmosOriginatedERC20(ctx, denom)
 		if !exists {
 			return false, common.Address{},
 				fmt.Errorf("denom not a gravity voucher coin: %s, and also not in cosmos-originated ERC20 index", err)
@@ -64,7 +64,7 @@ func (k Keeper) DenomToERC20Lookup(ctx sdk.Context, denom string) (bool, common.
 // and get its corresponding denom
 func (k Keeper) ERC20ToDenomLookup(ctx sdk.Context, tokenContract string) (bool, string) {
 	// First try looking up tokenContract in index
-	dn1, exists := k.getCosmosOriginatedDenom(ctx, tokenContract)
+	dn1, exists := k.GetCosmosOriginatedDenom(ctx, tokenContract)
 	if exists {
 		// It is a cosmos originated asset
 		return true, dn1

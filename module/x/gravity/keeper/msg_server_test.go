@@ -120,7 +120,7 @@ func TestMsgServer_SendToEthereum(t *testing.T) {
 	}
 
 	// create denom in keeper
-	gk.setCosmosOriginatedDenomToERC20(ctx, testDenom, "testcontractstring")
+	gk.SetCosmosOriginatedDenomToERC20(ctx, testDenom, "testcontractstring")
 
 	// setup for GetValidatorEthereumAddress
 	gk.setValidatorEthereumAddress(ctx, valAddr1, ethAddr1)
@@ -184,7 +184,7 @@ func TestMsgServer_CancelSendToEthereum(t *testing.T) {
 	}
 
 	// create denom in keeper
-	gk.setCosmosOriginatedDenomToERC20(ctx, testDenom, "testcontractstring")
+	gk.SetCosmosOriginatedDenomToERC20(ctx, testDenom, "testcontractstring")
 
 	// setup for GetValidatorEthereumAddress
 	gk.setValidatorEthereumAddress(ctx, valAddr1, ethAddr1)
@@ -234,7 +234,7 @@ func TestMsgServer_RequestBatchTx(t *testing.T) {
 	}
 
 	// create denom in keeper
-	gk.setCosmosOriginatedDenomToERC20(ctx, testDenom, "testcontractstring")
+	gk.SetCosmosOriginatedDenomToERC20(ctx, testDenom, "testcontractstring")
 
 	msgServer := NewMsgServerImpl(gk)
 

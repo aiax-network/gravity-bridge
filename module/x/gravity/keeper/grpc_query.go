@@ -309,7 +309,7 @@ func (k Keeper) ERC20ToDenom(c context.Context, req *types.ERC20ToDenomRequest) 
 
 func (k Keeper) DenomToERC20Params(c context.Context, req *types.DenomToERC20ParamsRequest) (*types.DenomToERC20ParamsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	if existingERC20, exists := k.getCosmosOriginatedERC20(ctx, req.Denom); exists {
+	if existingERC20, exists := k.GetCosmosOriginatedERC20(ctx, req.Denom); exists {
 		return nil, sdkerrors.Wrapf(
 			types.ErrInvalidERC20Event,
 			"ERC20 token %s already exists for denom %s", existingERC20.Hex(), req.Denom,
