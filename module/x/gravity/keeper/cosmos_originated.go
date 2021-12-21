@@ -36,6 +36,21 @@ func (k Keeper) SetCosmosOriginatedDenomToERC20(ctx sdk.Context, denom string, t
 	store.Set(types.MakeERC20ToDenomKey(tokenContract), []byte(denom))
 }
 
+func (k Keeper) SetCosmosOriginatedMintableStatus(ctx sdk.Context, tokenContract string, mintable bool) {
+	store := ctx.KVStore(k.storeKey)
+	var mintableByte byte = 0
+	if mintable {
+		mintableByte = 1
+	}
+	store.Set(types.MakeERC20CosmosOriginatedMintableKey(tokenContract), []byte{mintableByte})
+}
+
+func (k Keeper) GetCosmosOriginatedMintableStatus(ctx sdk.Context, tokenContract string) bool {
+  store := ctx.KVStore(k.storeKey)
+  bytes := store.Get(types.MakeERC20CosmosOriginatedMintableKey(tokenContract))
+  return bytes != nil && bytes[0] == 1
+}
+
 // DenomToERC20 returns (bool isCosmosOriginated, string ERC20, err)
 // Using this information, you can see if an asset is native to Cosmos or Ethereum,
 // and get its corresponding ERC20 address.

@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"fmt"
 	"math/big"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -23,6 +24,7 @@ func (k Keeper) DetectMaliciousSupply(ctx sdk.Context, denom string, amount sdk.
 
 // Handle is the entry point for EthereumEvent processing
 func (k Keeper) Handle(ctx sdk.Context, eve types.EthereumEvent) (err error) {
+	logger := ctx.Logger()
 	if k.EventsHook != nil {
 		processed, err := k.EventsHook.HandleEthereumEvent(ctx, eve)
 		if err != nil {
@@ -50,14 +52,16 @@ func (k Keeper) Handle(ctx sdk.Context, eve types.EthereumEvent) (err error) {
 	case *types.SendToCosmosEvent:
 		// Check if coin is Cosmos-originated asset and get denom
 		isCosmosOriginated, denom := k.ERC20ToDenomLookup(ctx, event.TokenContract)
+		isMintable := k.GetCosmosOriginatedMintableStatus(ctx, event.TokenContract)
 		addr, _ := sdk.AccAddressFromBech32(event.CosmosReceiver)
 		coins := sdk.Coins{sdk.NewCoin(denom, event.Amount)}
+    mint := !isCosmosOriginated || isMintable
 
-		if !isCosmosOriginated {
+		if mint {
 			if err := k.DetectMaliciousSupply(ctx, denom, event.Amount); err != nil {
 				return err
 			}
-
+			logger.Info(fmt.Sprintf("Minting voucher coins: %s for token contract: %s reciever: %s", coins, event.TokenContract, event.CosmosReceiver))
 			// if it is not cosmos originated, mint the coins (aka vouchers)
 			if err := k.bankKeeper.MintCoins(ctx, types.ModuleName, coins); err != nil {
 				return sdkerrors.Wrapf(err, "mint vouchers coins: %s", coins)
@@ -68,6 +72,7 @@ func (k Keeper) Handle(ctx sdk.Context, eve types.EthereumEvent) (err error) {
 			return err
 		}
 		k.AfterSendToCosmosEvent(ctx, *event)
+    logger.Info(fmt.Sprintf("SendToCosmos completed, coins: %s contract: %s reciever: %s minted: %v", coins, event.TokenContract, event.CosmosReceiver, mint))
 		return nil
 
 	case *types.BatchExecutedEvent:

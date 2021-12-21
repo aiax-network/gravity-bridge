@@ -55,6 +55,9 @@ const (
 	// ERC20ToDenomKey prefixes the index of Cosmos originated assets ERC20s to denoms
 	ERC20ToDenomKey
 
+	// ERC20CosmosOriginatedMintableKey mark cosmos originated flag associated with ERC20 contract
+	ERC20CosmosOriginatedMintableKey
+
 	// LastUnBondingBlockHeightKey indexes the last validator unbonding block height
 	LastUnBondingBlockHeightKey
 
@@ -143,6 +146,10 @@ func MakeDenomToERC20Key(denom string) []byte {
 
 func MakeERC20ToDenomKey(erc20 string) []byte {
 	return append([]byte{ERC20ToDenomKey}, []byte(erc20)...)
+}
+
+func MakeERC20CosmosOriginatedMintableKey(erc20 string) []byte {
+	return append([]byte{ERC20CosmosOriginatedMintableKey}, []byte(erc20)...)
 }
 
 func MakeSignerSetTxKey(nonce uint64) []byte {
