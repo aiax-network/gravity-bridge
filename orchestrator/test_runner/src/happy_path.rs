@@ -10,13 +10,13 @@ use clarity::PrivateKey as EthPrivateKey;
 use clarity::{Address as EthAddress, Uint256};
 use cosmos_gravity::send::{send_request_batch_tx, send_to_eth};
 use cosmos_gravity::{build, query::get_oldest_unsigned_transaction_batch, send};
+use cosmos_sdk_proto::gravity::query_client::QueryClient as GravityQueryClient;
 use deep_space::address::Address as CosmosAddress;
 use deep_space::coin::Coin;
 use deep_space::private_key::PrivateKey as CosmosPrivateKey;
 use deep_space::Contact;
 use ethereum_gravity::utils::get_valset_nonce;
 use ethereum_gravity::{send_to_cosmos::send_to_cosmos, utils::get_tx_batch_nonce};
-use cosmos_sdk_proto::gravity::query_client::QueryClient as GravityQueryClient;
 use gravity_utils::types::SendToCosmosEvent;
 use rand::Rng;
 use std::time::Duration;
@@ -453,10 +453,11 @@ async fn submit_duplicate_erc20_send(
         erc20: erc20_address,
         sender: ethereum_sender,
         destination: receiver,
-        amount,        
+        amount,
         name: "Test token".to_string(),
         symbol: "TTT".to_string(),
-        decimals: 18
+        decimals: 18,
+        native: false,
     };
 
     // iterate through all validators and try to send an event with duplicate nonce
