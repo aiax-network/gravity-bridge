@@ -62,7 +62,7 @@ pub async fn get_last_checked_block(
                 end_search.clone(),
                 Some(current_block.clone()),
                 vec![gravity_contract_address],
-                vec!["SendToCosmosEvent(address,address,bytes32,uint256,uint256,string,string,uint8)"],
+                vec!["SendToCosmosEvent(address,address,bytes32,uint256,uint256,string,string,uint8,bool)"],
             )
             .await;
         let erc20_deployed_events = web3
