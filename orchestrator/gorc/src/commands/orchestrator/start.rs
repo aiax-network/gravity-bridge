@@ -72,6 +72,12 @@ impl Runnable for StartCommand {
             // historic chain state while syncing occurs
             wait_for_cosmos_node_ready(&contact).await;
 
+            // foolproof
+            // check that gravity contract is matching cosmos chain
+            // without this check someone can join with wrong contract address and get stuck
+            // added after I have broken testnet with wrong contract address
+            extra_checks::check_gravity_id(&mut grpc, &web3, ethereum_address, contract_address).await;
+
             // check if the delegate addresses are correctly configured
             check_delegate_addresses(
                 &mut grpc,
@@ -108,5 +114,39 @@ impl Runnable for StartCommand {
             status_err!("executor exited with error: {}", e);
             std::process::exit(1);
         });
+    }
+}
+
+// Function is placed here instead of connection_prep.rs because it requires ethereum_gravity crate
+// and ethereum_gravity crate depends on gravity_utils that contains connection_prep.rs
+mod extra_checks {
+    use crate::prelude::*;
+    use cosmos_sdk_proto::gravity::query_client::QueryClient as GravityQueryClient;
+    use clarity::address::Address as EthAddress;
+    use cosmos_sdk_proto::gravity::ParamsRequest;
+    use ethereum_gravity::utils::get_gravity_id;
+    use tonic::transport::Channel;
+    use web30::client::Web3;
+
+    /// Checks that gravityId from eth contract matches the cosmos network one
+    pub async fn check_gravity_id(
+        client: &mut GravityQueryClient<Channel>,
+        web3: &Web3,
+        address: EthAddress,
+        contract_address: EthAddress, 
+    ) {
+        let eth_gid = {
+            let gid = get_gravity_id(contract_address, address, &web3).await.unwrap();
+            gid.trim_end_matches('\0').to_owned()
+        };
+        let cosmos_gid = client.params(ParamsRequest{}).await.unwrap().into_inner().params.unwrap().gravity_id;
+        if eth_gid != cosmos_gid {
+            error!("Ethereum contract gravityId does not match Cosmos one");
+            error!(
+                "eth_gravity_id {:?} != cosmos_gravity_id {:?}",
+                eth_gid, cosmos_gid,
+            );
+            std::process::exit(1);
+        }
     }
 }
