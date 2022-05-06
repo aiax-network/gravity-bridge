@@ -44,7 +44,7 @@ pub async fn check_for_events(
             starting_block.clone(),
             Some(latest_block.clone()),
             vec![gravity_contract_address],
-            vec!["SendToCosmosEvent(address,address,bytes32,uint256,uint256,string,string,uint8,bool)"],
+            vec!["SendToCosmosEvent(address,address,bytes32,uint256,uint256,string,string,uint8)"],
         )
         .await;
     debug!("Deposit events detected {:?}", deposits);

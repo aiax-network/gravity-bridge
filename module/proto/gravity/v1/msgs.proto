@@ -160,7 +160,6 @@ message SendToCosmosEvent {
   string name = 7;
   string symbol = 8;
   uint32 decimals = 9;
-  bool native = 10;
 }
 
 // BatchExecutedEvent claims that a batch of BatchTxExecutedal operations on the

@@ -55,7 +55,7 @@ func (k Keeper) Handle(ctx sdk.Context, eve types.EthereumEvent) (err error) {
 		isMintable := k.GetCosmosOriginatedMintableStatus(ctx, event.TokenContract)
 		addr, _ := sdk.AccAddressFromBech32(event.CosmosReceiver)
 		coins := sdk.Coins{sdk.NewCoin(denom, event.Amount)}
-    mint := !isCosmosOriginated || isMintable || event.Native
+    mint := !isCosmosOriginated || isMintable
 
 		if mint {
 			if err := k.DetectMaliciousSupply(ctx, denom, event.Amount); err != nil {

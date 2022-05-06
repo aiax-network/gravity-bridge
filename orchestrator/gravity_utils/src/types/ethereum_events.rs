@@ -249,8 +249,6 @@ pub struct SendToCosmosEvent {
     pub symbol: String,
     /// erc20 token decimals
     pub decimals: u8,
-    /// if native token contract
-    pub native: bool,
 }
 
 impl SendToCosmosEvent {
@@ -281,13 +279,6 @@ impl SendToCosmosEvent {
                 ));
             }
             let decimals: u8 = decimals.to_string().parse().unwrap();
-
-            // native
-            let index_start = index_end;
-            let index_end = index_start + 32;
-            let native = Uint256::from_bytes_be(&input.data[index_start..index_end]);
-            let native: u8 = native.to_string().parse().unwrap();
-            let native: bool = native == 1;
 
             // name
             let index_start = index_end;
@@ -342,7 +333,6 @@ impl SendToCosmosEvent {
                     name,
                     symbol,
                     decimals,
-                    native,
                 })
             }
         } else {

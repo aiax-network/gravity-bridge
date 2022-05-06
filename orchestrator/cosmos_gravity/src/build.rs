@@ -1,13 +1,13 @@
 use std::collections::BTreeMap;
 
 use clarity::PrivateKey as EthPrivateKey;
-use cosmos_sdk_proto::gravity as proto;
-use cosmos_sdk_proto::ToAny;
 use deep_space::private_key::PrivateKey as CosmosPrivateKey;
 use deep_space::utils::bytes_to_hex_str;
 use deep_space::Contact;
 use deep_space::Msg;
 use ethereum_gravity::utils::downcast_uint256;
+use cosmos_sdk_proto::gravity as proto;
+use cosmos_sdk_proto::ToAny;
 use gravity_utils::message_signatures::{
     encode_logic_call_confirm, encode_tx_batch_confirm, encode_valset_confirm,
 };
@@ -133,9 +133,8 @@ pub fn ethereum_event_messages(
             cosmos_receiver: deposit.destination.to_string(),
             ethereum_sender: deposit.sender.to_string(),
             name: deposit.name.to_string(),
-            symbol: deposit.symbol.to_string(),
-            decimals: deposit.decimals.into(),
-            native: deposit.native.into(),
+            symbol:  deposit.symbol.to_string(),
+            decimals: deposit.decimals.into()
         };
         let msg = proto::MsgSubmitEthereumEvent {
             signer: cosmos_address.to_string(),
