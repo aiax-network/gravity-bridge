@@ -29,13 +29,15 @@ func (k Keeper) createSendToEthereum(ctx sdk.Context, sender sdk.AccAddress, cou
 	if err != nil {
 		return 0, err
 	}
+	isMintable := k.GetCosmosOriginatedMintableStatus(ctx, tokenContract.Hex())
+	burn := !isCosmosOriginated || isMintable
 
 	if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, sender, types.ModuleName, totalInVouchers); err != nil {
 		return 0, err
 	}
 
 	// If it is no a cosmos-originated asset we burn
-	if !isCosmosOriginated {
+	if burn {
 		if err := k.bankKeeper.BurnCoins(ctx, types.ModuleName, totalInVouchers); err != nil {
 			panic(err)
 		}
