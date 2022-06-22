@@ -115,7 +115,11 @@ impl Runnable for CosmosToEthCmd {
         let times = times.parse::<usize>().expect("cannot parse times");
 
         match found {
-            None => panic!("You don't have any {} tokens!", gravity_denom),
+            None => {
+                // panic!("You don't have any {} tokens!", gravity_denom),
+                println!("No such tokens found in balances list. You have 5 seconds to cancel operation (ctrl+c) then it will ignore this check");
+                std::thread::sleep(std::time::Duration::from_secs(5));
+            }
             Some(found) => {
                 if amount.amount.clone() * times.into() >= found.amount && times == 1 {
                     if is_cosmos_originated {
